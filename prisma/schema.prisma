@@ -1,0 +1,53 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserSettings {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  currency      String   @default("USD")
+  timezone      String   @default("America/New_York")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model FinancialData {
+  id              String   @id @default(uuid())
+  userId          String
+  cashBalance     Float    @default(847290)
+  monthlyBurn     Float    @default(42350)
+  runway          Int      @default(20)
+  monthlyRevenue  Float    @default(67800)
+  updatedAt       DateTime @updatedAt
+  
+  @@index([userId])
+}
+
+model Transaction {
+  id                  String   @id @default(uuid())
+  userId              String
+  name                String
+  category            String
+  amount              Float
+  originalAmount      Float?
+  originalCurrency    String?
+  exchangeRate        Float?
+  date                DateTime @default(now())
+  icon                String?
+  trend               String?
+}
+
+model ExchangeRate {
+  id            String   @id @default(uuid())
+  fromCurrency  String
+  toCurrency    String
+  rate          Float
+  fetchedAt     DateTime @default(now())
+  
+  @@unique([fromCurrency, toCurrency])
+}
