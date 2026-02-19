@@ -1,12 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { FileText, Download, Calendar, TrendingUp, PieChart, CreditCard, DollarSign, FileSpreadsheet, FileBarChart } from "lucide-react";
+import { FileText, Download, Calendar, TrendingUp, PieChart, CreditCard, DollarSign, FileSpreadsheet, FileBarChart, Lightbulb, AlertTriangle, CheckCircle, TrendingDown, ArrowUpRight } from "lucide-react";
 import { formatCurrency } from "@/lib/currency/converter";
 import { CurrencyCode } from "@/lib/currency/config";
 import Link from "next/link";
-import { jsPDF } from "jspdf";
-import "jspdf-autotable";
 
 interface ReportsClientProps {
   currency: string;
@@ -18,6 +16,93 @@ export default function ReportsClient({ currency, transactions, financialData }:
   const currencyCode = currency as CurrencyCode;
   const [generating, setGenerating] = useState<string | null>(null);
 
+  // Calculate financial insights
+  const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+  const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+  const netCashFlow = totalIncome - totalExpenses;
+  const burnRate = financialData?.monthlyBurn || 0;
+  const runway = financialData?.runway || 0;
+  const cashBalance = financialData?.cashBalance || 0;
+  
+  // Calculate expense breakdown by category
+  const expensesByCategory = transactions
+    .filter(t => t.type === 'expense')
+    .reduce((acc, t) => {
+      acc[t.category] = (acc[t.category] || 0) + t.amount;
+      return acc;
+    }, {} as { [key: string]: number });
+  
+  const topExpenseCategories = Object.entries(expensesByCategory)
+    .sort(([, a], [, b]) => (b as number) - (a as number))
+    .slice(0, 5);
+
+  // AI Analysis
+  const generateAIAnalysis = () => {
+    const insights = [];
+    
+    // Runway analysis
+    if (runway < 6) {
+      insights.push({
+        type: 'critical',
+        title: 'Critical Runway Alert',
+        message: `You only have ${runway} months of runway remaining. Consider immediate cost-cutting measures or fundraising.`,
+        action: 'Review expenses immediately'
+      });
+    } else if (runway < 12) {
+      insights.push({
+        type: 'warning',
+        title: 'Runway Warning',
+        message: `With ${runway} months of runway, you should start planning your next funding round or revenue growth strategy.`,
+        action: 'Create fundraising plan'
+      });
+    }
+    
+    // Cash flow analysis
+    if (netCashFlow < 0) {
+      const monthlyLoss = Math.abs(netCashFlow);
+      insights.push({
+        type: 'warning',
+        title: 'Negative Cash Flow',
+        message: `You're losing ${formatCurrency(monthlyLoss, currencyCode)} per month. At this rate, you'll exhaust your funding in ${runway} months.`,
+        action: 'Reduce burn rate'
+      });
+    } else {
+      insights.push({
+        type: 'positive',
+        title: 'Positive Cash Flow',
+        message: `Great job! You're generating ${formatCurrency(netCashFlow, currencyCode)} in positive cash flow monthly.`,
+        action: 'Reinvest in growth'
+      });
+    }
+    
+    // Expense analysis
+    const totalExpensesAmount = Object.values(expensesByCategory).reduce((a, b) => (a as number) + (b as number), 0) as number;
+    if (topExpenseCategories.length > 0) {
+      const [topCategory, topAmount] = topExpenseCategories[0];
+      const percentage = ((topAmount as number) / totalExpensesAmount * 100).toFixed(1);
+      insights.push({
+        type: 'info',
+        title: 'Top Expense Category',
+        message: `${topCategory} represents ${percentage}% of your total expenses (${formatCurrency(topAmount as number, currencyCode)}).`,
+        action: 'Review spending'
+      });
+    }
+    
+    // Revenue recommendations
+    if (financialData?.monthlyRevenue < burnRate) {
+      insights.push({
+        type: 'critical',
+        title: 'Revenue vs Burn Gap',
+        message: `Your monthly revenue (${formatCurrency(financialData?.monthlyRevenue || 0, currencyCode)}) is below your burn rate (${formatCurrency(burnRate, currencyCode)}).`,
+        action: 'Increase revenue or cut costs'
+      });
+    }
+    
+    return insights;
+  };
+
+  const aiInsights = generateAIAnalysis();
+
   const generateCSV = (type: string) => {
     setGenerating(type);
     
@@ -27,37 +112,28 @@ export default function ReportsClient({ currency, transactions, financialData }:
     switch (type) {
       case "transactions":
         csvContent = [
-          ["Date", "Description", "Category", "Type", "Amount"].join(","),
+          ["Date", "Description", "Category", "Type", "Amount", "Vendor", "Payment Method"].join(","),
           ...transactions.map(t => [
             new Date(t.date).toLocaleDateString(),
             `"${t.name}"`,
             t.category,
             t.type,
-            t.amount
+            t.amount,
+            t.vendor || '',
+            t.paymentMethod || ''
           ].join(","))
         ].join("\n");
         filename = `transactions_${new Date().toISOString().split('T')[0]}.csv`;
         break;
         
-      case "p&l":
-        const income = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-        const expenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0);
+      case "pnl":
         csvContent = [
           ["Item", "Amount"].join(","),
-          ["Total Income", income].join(","),
-          ["Total Expenses", expenses].join(","),
-          ["Net Profit/Loss", income - expenses].join(",")
+          ["Total Income", totalIncome].join(","),
+          ["Total Expenses", totalExpenses].join(","),
+          ["Net Profit/Loss", netCashFlow].join(",")
         ].join("\n");
         filename = `pnl_statement_${new Date().toISOString().split('T')[0]}.csv`;
-        break;
-        
-      case "cashflow":
-        const monthlyData = getMonthlyData(transactions);
-        csvContent = [
-          ["Month", "Income", "Expenses", "Net Cash Flow"].join(","),
-          ...monthlyData.map(m => [m.month, m.income, m.expenses, m.net].join(","))
-        ].join("\n");
-        filename = `cashflow_${new Date().toISOString().split('T')[0]}.csv`;
         break;
     }
     
@@ -72,140 +148,23 @@ export default function ReportsClient({ currency, transactions, financialData }:
     setTimeout(() => setGenerating(null), 1000);
   };
 
-  const generatePDF = async (type: string) => {
-    setGenerating(type);
-    
-    const doc = new jsPDF();
-    
-    // Add header
-    doc.setFontSize(20);
-    doc.text("FinOps AI Report", 14, 20);
-    doc.setFontSize(12);
-    doc.text(`Generated: ${new Date().toLocaleDateString()}`, 14, 30);
-    doc.text(`Currency: ${currencyCode}`, 14, 38);
-    
+  const getInsightIcon = (type: string) => {
     switch (type) {
-      case "full":
-        // Financial Summary
-        doc.setFontSize(16);
-        doc.text("Financial Summary", 14, 50);
-        doc.setFontSize(12);
-        doc.text(`Cash Balance: ${formatCurrency(financialData?.cashBalance || 0, currencyCode)}`, 14, 60);
-        doc.text(`Monthly Revenue: ${formatCurrency(financialData?.monthlyRevenue || 0, currencyCode)}`, 14, 68);
-        doc.text(`Monthly Burn: ${formatCurrency(financialData?.monthlyBurn || 0, currencyCode)}`, 14, 76);
-        doc.text(`Runway: ${financialData?.runway || 0} months`, 14, 84);
-        
-        // Recent Transactions
-        doc.setFontSize(16);
-        doc.text("Recent Transactions", 14, 100);
-        (doc as any).autoTable({
-          startY: 105,
-          head: [['Date', 'Description', 'Category', 'Type', 'Amount']],
-          body: transactions.slice(0, 20).map(t => [
-            new Date(t.date).toLocaleDateString(),
-            t.name,
-            t.category,
-            t.type,
-            formatCurrency(t.amount, currencyCode)
-          ]),
-        });
-        break;
-        
-      case "expense":
-        doc.setFontSize(16);
-        doc.text("Expense Report", 14, 50);
-        
-        const expensesByCategory = getExpensesByCategory(transactions);
-        (doc as any).autoTable({
-          startY: 60,
-          head: [['Category', 'Amount', 'Percentage']],
-          body: expensesByCategory.map(cat => [
-            cat.name,
-            formatCurrency(cat.value, currencyCode),
-            `${cat.percentage}%`
-          ]),
-        });
-        break;
+      case 'critical': return <AlertTriangle className="w-5 h-5 text-red-400" />;
+      case 'warning': return <AlertTriangle className="w-5 h-5 text-yellow-400" />;
+      case 'positive': return <CheckCircle className="w-5 h-5 text-emerald-400" />;
+      default: return <Lightbulb className="w-5 h-5 text-blue-400" />;
     }
-    
-    doc.save(`report_${type}_${new Date().toISOString().split('T')[0]}.pdf`);
-    setTimeout(() => setGenerating(null), 1000);
   };
 
-  const getMonthlyData = (transactions: any[]) => {
-    const months: { [key: string]: { income: number; expenses: number } } = {};
-    
-    transactions.forEach(t => {
-      const month = new Date(t.date).toLocaleString('default', { month: 'short', year: '2-digit' });
-      if (!months[month]) months[month] = { income: 0, expenses: 0 };
-      if (t.type === 'income') months[month].income += t.amount;
-      else months[month].expenses += t.amount;
-    });
-    
-    return Object.entries(months).map(([month, data]) => ({
-      month,
-      income: data.income,
-      expenses: data.expenses,
-      net: data.income - data.expenses
-    }));
+  const getInsightColor = (type: string) => {
+    switch (type) {
+      case 'critical': return 'bg-red-500/10 border-red-500/20';
+      case 'warning': return 'bg-yellow-500/10 border-yellow-500/20';
+      case 'positive': return 'bg-emerald-500/10 border-emerald-500/20';
+      default: return 'bg-blue-500/10 border-blue-500/20';
+    }
   };
-
-  const getExpensesByCategory = (transactions: any[]) => {
-    const expenses = transactions.filter(t => t.type === 'expense');
-    const total = expenses.reduce((sum, t) => sum + t.amount, 0);
-    const byCategory: { [key: string]: number } = {};
-    
-    expenses.forEach(t => {
-      byCategory[t.category] = (byCategory[t.category] || 0) + t.amount;
-    });
-    
-    return Object.entries(byCategory)
-      .map(([name, value]) => ({ name, value, percentage: ((value / total) * 100).toFixed(1) }))
-      .sort((a, b) => b.value - a.value);
-  };
-
-  const reportTypes = [
-    { 
-      id: "transactions", 
-      name: "Transaction Report", 
-      description: "Complete list of all transactions",
-      icon: FileSpreadsheet,
-      format: "CSV",
-      action: () => generateCSV("transactions")
-    },
-    { 
-      id: "pnl", 
-      name: "P&L Statement", 
-      description: "Profit and loss summary",
-      icon: DollarSign,
-      format: "CSV",
-      action: () => generateCSV("p&l")
-    },
-    { 
-      id: "cashflow", 
-      name: "Cash Flow Report", 
-      description: "Monthly cash flow analysis",
-      icon: TrendingUp,
-      format: "CSV",
-      action: () => generateCSV("cashflow")
-    },
-    { 
-      id: "full", 
-      name: "Full Financial Report", 
-      description: "Complete financial overview",
-      icon: FileBarChart,
-      format: "PDF",
-      action: () => generatePDF("full")
-    },
-    { 
-      id: "expense", 
-      name: "Expense Breakdown", 
-      description: "Expenses by category",
-      icon: PieChart,
-      format: "PDF",
-      action: () => generatePDF("expense")
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] p-6 lg:p-8">
@@ -213,80 +172,114 @@ export default function ReportsClient({ currency, transactions, financialData }:
         {/* Header */}
         <header className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold text-white tracking-tight">Reports</h1>
-            <p className="text-sm text-zinc-400 mt-1">Generate and download financial reports</p>
+            <h1 className="text-2xl font-semibold text-white tracking-tight">Financial Reports & Analysis</h1>
+            <p className="text-sm text-zinc-400 mt-1">AI-powered insights and downloadable reports</p>
           </div>
           <Link href="/" className="text-sm text-emerald-400 hover:text-emerald-300">← Back to Overview</Link>
         </header>
 
-        {/* Report Types */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {reportTypes.map((report) => (
-            <div
-              key={report.id}
-              className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06] hover:border-white/[0.1] transition-all"
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center">
-                  <report.icon className="w-6 h-6 text-emerald-400" />
-                </div>
-                <span className="px-2 py-1 bg-zinc-800 text-zinc-400 text-xs rounded-full">
-                  {report.format}
-                </span>
-              </div>
-              
-              <h3 className="text-lg font-semibold text-white mb-1">{report.name}</h3>
-              <p className="text-sm text-zinc-400 mb-4">{report.description}</p>
-              
-              <button
-                onClick={report.action}
-                disabled={generating === report.id}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
-              >
-                <Download className="w-4 h-4" />
-                {generating === report.id ? 'Generating...' : 'Download'}
-              </button>
+        {/* AI Financial Health Dashboard */}
+        <div className="bg-gradient-to-br from-violet-500/10 to-purple-500/10 rounded-2xl p-6 border border-violet-500/20 mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-violet-500/20 flex items-center justify-center">
+              <Lightbulb className="w-5 h-5 text-violet-400" />
             </div>
-          ))}
+            <div>
+              <h2 className="text-lg font-semibold text-white">AI Financial Health Analysis</h2>
+              <p className="text-sm text-zinc-400">Personalized insights based on your data</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div className="bg-zinc-900/50 rounded-xl p-4">
+              <p className="text-xs text-zinc-500 uppercase">Cash Balance</p>
+              <p className="text-xl font-semibold text-white mt-1">{formatCurrency(cashBalance, currencyCode)}</p>
+            </div>
+            <div className="bg-zinc-900/50 rounded-xl p-4">
+              <p className="text-xs text-zinc-500 uppercase">Monthly Burn</p>
+              <p className="text-xl font-semibold text-red-400 mt-1">{formatCurrency(burnRate, currencyCode)}</p>
+            </div>
+            <div className="bg-zinc-900/50 rounded-xl p-4">
+              <p className="text-xs text-zinc-500 uppercase">Monthly Revenue</p>
+              <p className="text-xl font-semibold text-emerald-400 mt-1">{formatCurrency(financialData?.monthlyRevenue || 0, currencyCode)}</p>
+            </div>
+            <div className="bg-zinc-900/50 rounded-xl p-4">
+              <p className="text-xs text-zinc-500 uppercase">Runway</p>
+              <p className={`text-xl font-semibold mt-1 ${runway < 6 ? 'text-red-400' : runway < 12 ? 'text-yellow-400' : 'text-emerald-400'}`}>
+                {runway} months
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            {aiInsights.map((insight, index) => (
+              <div key={index} className={`p-4 rounded-xl border ${getInsightColor(insight.type)}`}>
+                <div className="flex items-start gap-3">
+                  {getInsightIcon(insight.type)}
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-white">{insight.title}</h3>
+                    <p className="text-sm text-zinc-300 mt-1">{insight.message}</p>
+                    <button className="mt-2 text-xs text-emerald-400 hover:text-emerald-300 flex items-center gap-1">
+                      {insight.action} <ArrowUpRight className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Scheduled Reports */}
-        <div className="mt-8 bg-zinc-900/50 rounded-2xl border border-white/[0.06]">
-          <div className="p-6 border-b border-white/[0.06]">
-            <h2 className="text-lg font-semibold text-white">Scheduled Reports</h2>
-            <p className="text-sm text-zinc-400 mt-1">Set up automatic report generation</p>
+        {/* Top Expense Categories */}
+        {topExpenseCategories.length > 0 && (
+          <div className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06] mb-8">
+            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <PieChart className="w-5 h-5 text-emerald-400" />
+              Top Expense Categories
+            </h2>
+            <div className="space-y-3">
+              {topExpenseCategories.map(([category, amount], index) => {
+                const total = Object.values(expensesByCategory).reduce((a, b) => (a as number) + (b as number), 0) as number;
+                const percentage = ((amount as number) / total * 100).toFixed(1);
+                return (
+                  <div key={category} className="flex items-center justify-between p-3 bg-zinc-800/50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <span className="text-zinc-500">#{index + 1}</span>
+                      <span className="text-white">{category}</span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-white font-medium">{formatCurrency(amount as number, currencyCode)}</p>
+                      <p className="text-xs text-zinc-500">{percentage}% of expenses</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          
-          <div className="divide-y divide-white/[0.06]">
-            <div className="p-6 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-violet-400" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-white">Weekly Financial Summary</h3>
-                  <p className="text-xs text-zinc-500">Every Monday at 9:00 AM</p>
-                </div>
-              </div>
-              <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 text-xs rounded-full">
-                Active
-              </span>
-            </div>
+        )}
+
+        {/* Download Reports */}
+        <div className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06]">
+          <h2 className="text-lg font-semibold text-white mb-4">Download Reports</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <button
+              onClick={() => generateCSV("transactions")}
+              disabled={generating === "transactions"}
+              className="p-4 bg-zinc-800/50 rounded-xl border border-white/[0.06] hover:border-white/[0.1] transition-all text-left"
+            >
+              <FileSpreadsheet className="w-8 h-8 text-emerald-400 mb-3" />
+              <h3 className="text-sm font-medium text-white">Transaction Report</h3>
+              <p className="text-xs text-zinc-500 mt-1">Complete transaction history</p>
+            </button>
             
-            <div className="p-6 flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-                  <Calendar className="w-5 h-5 text-blue-400" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-medium text-white">Monthly P&L Statement</h3>
-                  <p className="text-xs text-zinc-500">1st of every month</p>
-                </div>
-              </div>
-              <button className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 text-xs rounded-lg transition-colors">
-                Enable
-              </button>
-            </div>
+            <button
+              onClick={() => generateCSV("pnl")}
+              disabled={generating === "pnl"}
+              className="p-4 bg-zinc-800/50 rounded-xl border border-white/[0.06] hover:border-white/[0.1] transition-all text-left"
+            >
+              <DollarSign className="w-8 h-8 text-emerald-400 mb-3" />
+              <h3 className="text-sm font-medium text-white">P&L Statement</h3>
+              <p className="text-xs text-zinc-500 mt-1">Profit and loss summary</p>
+            </button>
           </div>
         </div>
       </div>

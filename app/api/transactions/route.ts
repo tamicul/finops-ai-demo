@@ -14,6 +14,8 @@ export async function GET(req: NextRequest) {
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
     const type = searchParams.get('type');
+    const category = searchParams.get('category');
+    const vendor = searchParams.get('vendor');
     
     const where: any = { userId };
     
@@ -26,6 +28,14 @@ export async function GET(req: NextRequest) {
     
     if (type && type !== 'all') {
       where.type = type;
+    }
+    
+    if (category && category !== 'all') {
+      where.category = category;
+    }
+    
+    if (vendor) {
+      where.vendor = { contains: vendor, mode: 'insensitive' };
     }
     
     const transactions = await prisma.transaction.findMany({
@@ -49,20 +59,31 @@ export async function POST(req: NextRequest) {
     }
     
     const body = await req.json();
-    const { name, category, amount, type, date } = body;
+    const { 
+      name, description, category, amount, type, date,
+      vendor, vendorType, paymentMethod, referenceNumber,
+      status, tags
+    } = body;
     
     const transaction = await prisma.transaction.create({
       data: {
         userId,
         name,
+        description,
         category,
         amount,
         type,
         date: new Date(date),
+        vendor,
+        vendorType,
+        paymentMethod,
+        referenceNumber,
+        status: status || 'completed',
+        tags: tags || [],
       }
     });
     
-    // Update financial data
+    // Update financial data aggregates
     const financialData = await prisma.financialData.findUnique({
       where: { userId }
     });
@@ -71,16 +92,12 @@ export async function POST(req: NextRequest) {
       if (type === 'expense') {
         await prisma.financialData.update({
           where: { userId },
-          data: { 
-            monthlyBurn: financialData.monthlyBurn + amount 
-          }
+          data: { monthlyBurn: financialData.monthlyBurn + amount }
         });
       } else {
         await prisma.financialData.update({
           where: { userId },
-          data: { 
-            monthlyRevenue: financialData.monthlyRevenue + amount 
-          }
+          data: { monthlyRevenue: financialData.monthlyRevenue + amount }
         });
       }
     }
@@ -101,16 +118,27 @@ export async function PUT(req: NextRequest) {
     }
     
     const body = await req.json();
-    const { id, name, category, amount, type, date } = body;
+    const { 
+      id, name, description, category, amount, type, date,
+      vendor, vendorType, paymentMethod, referenceNumber,
+      status, tags
+    } = body;
     
     const transaction = await prisma.transaction.update({
       where: { id, userId },
       data: {
         name,
+        description,
         category,
         amount,
         type,
         date: new Date(date),
+        vendor,
+        vendorType,
+        paymentMethod,
+        referenceNumber,
+        status,
+        tags,
       }
     });
     

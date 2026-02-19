@@ -11,16 +11,35 @@ export async function POST(req: NextRequest) {
     }
     
     const body = await req.json();
-    const { cashBalance, monthlyBurn, monthlyRevenue, runway, currency } = body;
+    const { 
+      cashBalance, monthlyBurn, monthlyRevenue, runway, currency,
+      businessName, businessType, industry, location, foundedYear, employeeCount, website
+    } = body;
     
     // Update currency preference
     await prisma.userSettings.upsert({
       where: { userId },
-      update: { currency },
+      update: { 
+        currency,
+        businessName,
+        businessType,
+        industry,
+        location,
+        foundedYear: foundedYear ? parseInt(foundedYear) : null,
+        employeeCount: employeeCount ? parseInt(employeeCount) : null,
+        website,
+      },
       create: {
         userId,
         currency,
-        timezone: 'America/New_York'
+        timezone: 'America/New_York',
+        businessName,
+        businessType,
+        industry,
+        location,
+        foundedYear: foundedYear ? parseInt(foundedYear) : null,
+        employeeCount: employeeCount ? parseInt(employeeCount) : null,
+        website,
       }
     });
     

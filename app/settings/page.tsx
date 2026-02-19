@@ -25,7 +25,16 @@ export default async function SettingsPage() {
         has2FA: user?.twoFactorEnabled || false,
       }}
       financialData={financialData}
-      currency={userSettings?.currency || 'USD'}
+      userSettings={{
+        currency: userSettings?.currency || 'USD',
+        businessName: userSettings?.businessName || undefined,
+        businessType: userSettings?.businessType || undefined,
+        industry: userSettings?.industry || undefined,
+        location: userSettings?.location || undefined,
+        foundedYear: userSettings?.foundedYear || undefined,
+        employeeCount: userSettings?.employeeCount || undefined,
+        website: userSettings?.website || undefined,
+      }}
     />
   );
 }

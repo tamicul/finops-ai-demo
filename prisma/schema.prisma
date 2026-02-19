@@ -10,12 +10,22 @@ datasource db {
 
 
 model UserSettings {
-  id            String   @id @default(uuid())
-  userId        String   @unique
-  currency      String   @default("USD")
-  timezone      String   @default("America/New_York")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  currency        String   @default("USD")
+  timezone        String   @default("America/New_York")
+  
+  // Business Profile
+  businessName    String?
+  businessType    String?  // LLC, Corporation, Sole Proprietorship, etc.
+  industry        String?
+  location        String?  // City, Country
+  foundedYear     Int?
+  employeeCount   Int?
+  website         String?
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model FinancialData {
@@ -31,19 +41,37 @@ model FinancialData {
 model Transaction {
   id                  String   @id @default(uuid())
   userId              String
-  name                String
+  
+  // Transaction Details
+  name                String   // Description of transaction
+  description         String?  // Additional details
   category            String
   amount              Float
-  type                String   @default("expense")
+  type                String   @default("expense") // income or expense
+  
+  // Vendor/Customer Info
+  vendor              String?  // Who you paid or received from
+  vendorType          String?  // supplier, customer, service_provider, etc.
+  
+  // Payment Details
+  paymentMethod       String?  // credit_card, bank_transfer, cash, etc.
+  referenceNumber     String?  // Invoice #, Receipt #, etc.
+  
+  // For multi-currency
   originalAmount      Float?
   originalCurrency    String?
   exchangeRate        Float?
+  
+  // Metadata
   date                DateTime @default(now())
-  icon                String?
-  trend               String?
+  status              String   @default("completed") // pending, completed, cancelled
+  tags                String[] // For flexible categorization
+  attachments         String[] // URLs to receipts/invoices
   
   @@index([userId])
   @@index([date])
+  @@index([category])
+  @@index([vendor])
 }
 
 model ExchangeRate {
@@ -54,4 +82,35 @@ model ExchangeRate {
   fetchedAt     DateTime @default(now())
   
   @@unique([fromCurrency, toCurrency])
+}
+
+model Anomaly {
+  id              String   @id @default(uuid())
+  userId          String
+  
+  title           String
+  description     String
+  severity        String   // high, medium, low
+  status          String   @default("open") // open, investigating, resolved, dismissed
+  category        String   // spending_spike, duplicate, unusual_pattern, etc.
+  
+  // Financial impact
+  amount          Float?
+  currency        String?
+  potentialSavings Float?
+  
+  // Related data
+  relatedTransactionIds String[]
+  
+  // AI Analysis
+  aiConfidence    Float?   // 0-1 confidence score
+  aiRecommendation String?
+  
+  // Timestamps
+  detectedAt      DateTime @default(now())
+  resolvedAt      DateTime?
+  
+  @@index([userId])
+  @@index([status])
+  @@index([detectedAt])
 }
