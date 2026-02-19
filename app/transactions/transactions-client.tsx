@@ -274,7 +274,7 @@ export default function TransactionsClient({ transactions, currency }: Transacti
           </div>
         </div>
 
-        {/* Connected Banks Status */}
+        {/* Connected Accounts Status */}
         <div className="bg-zinc-900/50 rounded-xl p-5 border border-white/[0.06] mb-8">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-white flex items-center gap-2">
@@ -283,30 +283,121 @@ export default function TransactionsClient({ transactions, currency }: Transacti
             </h3>
             <span className="text-xs text-zinc-500">Auto-sync enabled</span>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
-              <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-xl">🏦</div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-white">Bank Account</p>
-                <p className="text-xs text-zinc-500">Not connected</p>
+          
+          {/* Banking */}
+          <div className="mb-4">
+            <p className="text-xs text-zinc-500 uppercase mb-2">Banking</p>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+                <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-xl">🏦</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Chase</p>
+                  <p className="text-xs text-zinc-500">Not connected</p>
+                </div>
+                <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
               </div>
-              <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+              <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+                <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-xl">🏦</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Bank of America</p>
+                  <p className="text-xs text-zinc-500">Not connected</p>
+                </div>
+                <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+                <div className="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center text-xl">🏦</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Wells Fargo</p>
+                  <p className="text-xs text-zinc-500">Not connected</p>
+                </div>
+                <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-xl">🏦</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Other Banks</p>
+                  <p className="text-xs text-zinc-500">10,000+ supported</p>
+                </div>
+                <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+              </div>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
-              <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center text-xl">💳</div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-white">Stripe</p>
-                <p className="text-xs text-zinc-500">Not connected</p>
+          </div>
+          
+          {/* Payment Platforms */}
+          <div className="mb-4">
+            <p className="text-xs text-zinc-500 uppercase mb-2">Payment Platforms</p>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+                <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center text-xl">💳</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Stripe</p>
+                  <p className="text-xs text-zinc-500">Payments</p>
+                </div>
+                <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
               </div>
-              <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+              <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-xl">💰</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">PayPal</p>
+                  <p className="text-xs text-zinc-500">Business</p>
+                </div>
+                <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+                <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-xl">💚</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Opay</p>
+                  <p className="text-xs text-zinc-500">Mobile Money</p>
+                </div>
+                <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+                <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center text-xl">💳</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Flutterwave</p>
+                  <p className="text-xs text-zinc-500">Africa Payments</p>
+                </div>
+                <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+              </div>
             </div>
-            <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
-              <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-xl">💰</div>
-              <div className="flex-1">
-                <p className="text-sm font-medium text-white">PayPal</p>
-                <p className="text-xs text-zinc-500">Not connected</p>
+          </div>
+          
+          {/* Crypto & Other */}
+          <div>
+            <p className="text-xs text-zinc-500 uppercase mb-2">Crypto & Digital Wallets</p>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+              <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+                <div className="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center text-xl">₿</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Coinbase</p>
+                  <p className="text-xs text-zinc-500">Crypto</p>
+                </div>
+                <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
               </div>
-              <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+              <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+                <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center text-xl">💎</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Wise</p>
+                  <p className="text-xs text-zinc-500">Transfers</p>
+                </div>
+                <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+                <div className="w-10 h-10 rounded-lg bg-red-500/10 flex items-center justify-center text-xl">📱</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Payoneer</p>
+                  <p className="text-xs text-zinc-500">Global</p>
+                </div>
+                <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+              </div>
+              <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+                <div className="w-10 h-10 rounded-lg bg-emerald-500/10 flex items-center justify-center text-xl">⇄</div>
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-white">Remitly</p>
+                  <p className="text-xs text-zinc-500">Remittances</p>
+                </div>
+                <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+              </div>
             </div>
           </div>
         </div>
