@@ -140,3 +140,4 @@ export default function SettingsClient({ user, financialData, currency }: Settin
     </div>
   );
 }
+
