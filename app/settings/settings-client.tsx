@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowLeft, Save, Shield, Bell, Lock, User, Bank, CreditCard, Smartphone, Key } from "lucide-react";
+import { ArrowLeft, Save, Shield, Bell, Lock, User, Building2, CreditCard, Smartphone, Key } from "lucide-react";
 import Link from "next/link";
 import { CurrencySelector } from "@/components/currency-selector";
 import { CurrencyCode } from "@/lib/currency/config";
@@ -73,7 +73,7 @@ export default function SettingsClient({ user, financialData, currency }: Settin
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'financial', label: 'Financial Data', icon: CreditCard },
     { id: 'security', label: 'Security & 2FA', icon: Shield },
-    { id: 'integrations', label: 'Integrations', icon: Bank },
+    { id: 'integrations', label: 'Integrations', icon: Building2 },
   ];
 
   return (
