@@ -21,6 +21,7 @@ export default function Page() {
               formButtonPrimary: "bg-emerald-500 hover:bg-emerald-600",
             }
           }}
+          fallbackRedirectUrl="/"
         />
       </div>
     </div>
