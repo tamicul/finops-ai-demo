@@ -8,17 +8,22 @@ import { ChevronDown } from 'lucide-react';
 interface CurrencySelectorProps {
   value: CurrencyCode;
   onChange: (currency: CurrencyCode) => void;
+  disabled?: boolean;
 }
 
-export function CurrencySelector({ value, onChange }: CurrencySelectorProps) {
+export function CurrencySelector({ value, onChange, disabled }: CurrencySelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const selected = currencies[value];
   
   return (
     <div className="relative">
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 bg-zinc-800 rounded-lg text-white text-sm hover:bg-zinc-700 transition-colors border border-white/10"
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        disabled={disabled}
+        className={cn(
+          "flex items-center gap-2 px-3 py-2 bg-zinc-800 rounded-lg text-white text-sm border border-white/10",
+          disabled ? "opacity-50 cursor-not-allowed" : "hover:bg-zinc-700 transition-colors"
+        )}
       >
         <span className="text-lg">{selected.flag}</span>
         <span className="font-medium">{value}</span>

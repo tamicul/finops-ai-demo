@@ -1,11 +1,14 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
+
 
 model UserSettings {
   id            String   @id @default(uuid())
@@ -18,14 +21,12 @@ model UserSettings {
 
 model FinancialData {
   id              String   @id @default(uuid())
-  userId          String
+  userId          String   @unique
   cashBalance     Float    @default(847290)
   monthlyBurn     Float    @default(42350)
   runway          Int      @default(20)
   monthlyRevenue  Float    @default(67800)
   updatedAt       DateTime @updatedAt
-  
-  @@index([userId])
 }
 
 model Transaction {

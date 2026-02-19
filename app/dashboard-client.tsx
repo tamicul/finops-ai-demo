@@ -10,8 +10,10 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Download,
+  Settings,
 } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { CurrencySelector } from "@/components/currency-selector";
 import { CurrencyCode } from "@/lib/currency/config";
@@ -54,6 +56,58 @@ interface DashboardClientProps {
 
 export default function DashboardClient({ user, currency, financialData }: DashboardClientProps) {
   const [currentCurrency, setCurrentCurrency] = useState<CurrencyCode>(currency);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const response = await fetch('/api/export');
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'financial-report.csv';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        alert('Failed to export report');
+      }
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('Failed to export report');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+  
+  const handleCurrencyChange = async (newCurrency: CurrencyCode) => {
+    if (newCurrency === currentCurrency) return;
+    
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/currency', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currency: newCurrency }),
+      });
+      
+      if (response.ok) {
+        setCurrentCurrency(newCurrency);
+        window.location.reload(); // Reload to get converted amounts
+      } else {
+        alert('Failed to save currency preference');
+      }
+    } catch (error) {
+      console.error('Error saving currency:', error);
+      alert('Failed to save currency preference');
+    } finally {
+      setIsSaving(false);
+    }
+  };
   
   const stats = [
     {
@@ -101,16 +155,27 @@ export default function DashboardClient({ user, currency, financialData }: Dashb
           <div className="flex items-center gap-4">
             <CurrencySelector 
               value={currentCurrency} 
-              onChange={async (newCurrency) => {
-                // In a real app, this would save to database
-                setCurrentCurrency(newCurrency);
-                window.location.reload();
-              }}
+              onChange={handleCurrencyChange}
+              disabled={isSaving}
             />
-            <button className="flex items-center gap-2 px-4 py-2.5 bg-zinc-900/80 text-zinc-300 rounded-xl border border-white/[0.06] hover:bg-zinc-800/80 transition-all">
+            <button 
+              onClick={handleExport}
+              disabled={isExporting}
+              className={cn(
+                "flex items-center gap-2 px-4 py-2.5 bg-zinc-900/80 text-zinc-300 rounded-xl border border-white/[0.06]",
+                isExporting ? "opacity-50 cursor-not-allowed" : "hover:bg-zinc-800/80 transition-all"
+              )}
+            >
               <Download className="w-4 h-4" />
-              <span className="text-sm font-medium">Export</span>
+              <span className="text-sm font-medium">{isExporting ? 'Exporting...' : 'Export'}</span>
             </button>
+            <Link 
+              href="/settings"
+              className="flex items-center gap-2 px-4 py-2.5 bg-zinc-900/80 text-zinc-300 rounded-xl border border-white/[0.06] hover:bg-zinc-800/80 transition-all"
+            >
+              <Settings className="w-4 h-4" />
+              <span className="text-sm font-medium">Settings</span>
+            </Link>
             <UserButton afterSignOutUrl="/sign-in" />
           </div>
         </header>

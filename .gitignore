@@ -42,3 +42,4 @@ prisma/*.db
 .idea/
 *.swp
 *.swo
+.env*.local

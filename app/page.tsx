@@ -37,15 +37,21 @@ export default async function Dashboard() {
     where: { userId }
   });
   
-  // Create default financial data if not exists
+  // Create randomized demo data if not exists
   if (!financialData) {
+    // Generate unique demo data for each user
+    const randomBalance = Math.floor(Math.random() * 900000) + 100000; // 100k to 1M
+    const randomBurn = Math.floor(Math.random() * 80000) + 20000; // 20k to 100k
+    const randomRevenue = Math.floor(Math.random() * 150000) + 30000; // 30k to 180k
+    const randomRunway = Math.floor(Math.random() * 24) + 6; // 6 to 30 months
+    
     financialData = await prisma.financialData.create({
       data: {
         userId,
-        cashBalance: 847290,
-        monthlyBurn: 42350,
-        runway: 20,
-        monthlyRevenue: 67800
+        cashBalance: randomBalance,
+        monthlyBurn: randomBurn,
+        runway: randomRunway,
+        monthlyRevenue: randomRevenue
       }
     });
   }
