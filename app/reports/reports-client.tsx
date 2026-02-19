@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+
 import { FileText, Download, Calendar, TrendingUp, PieChart, CreditCard } from "lucide-react";
 import { formatCurrency } from "@/lib/currency/converter";
 import { CurrencyCode } from "@/lib/currency/config";
@@ -40,9 +40,9 @@ export default function ReportsClient({ currency }: ReportsClientProps) {
         </header>
 
         {/* Templates */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
+          
+          
           className="mb-8"
         >
           <h2 className="text-sm font-medium text-zinc-400 uppercase tracking-wider mb-4">Quick Generate</h2>
@@ -60,13 +60,13 @@ export default function ReportsClient({ currency }: ReportsClientProps) {
               </button>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Reports List */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+        <div
+          
+          
+          
           className="bg-zinc-900/50 rounded-2xl border border-white/[0.06]"
         >
           <div className="p-6 border-b border-white/[0.06]">
@@ -100,13 +100,13 @@ export default function ReportsClient({ currency }: ReportsClientProps) {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Quick Tip */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <div
+          
+          
+          
           className="mt-6 bg-gradient-to-r from-violet-500/10 to-purple-500/10 rounded-2xl p-6 border border-violet-500/20"
         >
           <div className="flex items-center gap-4">
@@ -123,7 +123,7 @@ export default function ReportsClient({ currency }: ReportsClientProps) {
               Set Up
             </button>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

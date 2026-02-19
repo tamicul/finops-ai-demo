@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+
 import { CreditCard, TrendingUp, Search, Filter } from "lucide-react";
 import { formatCurrency, formatCompactCurrency } from "@/lib/currency/converter";
 import { CurrencyCode } from "@/lib/currency/config";
@@ -46,9 +46,9 @@ export default function ExpensesClient({ monthlyBurn, currency }: ExpensesClient
         </header>
 
         {/* Monthly Summary */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
+          
+          
           className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06] mb-6"
         >
           <div className="flex items-center justify-between">
@@ -68,15 +68,15 @@ export default function ExpensesClient({ monthlyBurn, currency }: ExpensesClient
               <p className="text-sm text-emerald-400">38% of total</p>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Expense Breakdown */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div
+            
+            
+            
             className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06]"
           >
             <h2 className="text-lg font-semibold text-white mb-6">Expense Breakdown</h2>
@@ -119,13 +119,13 @@ export default function ExpensesClient({ monthlyBurn, currency }: ExpensesClient
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
 
           {/* Recent Transactions */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
+            
+            
+            
             className="lg:col-span-2 bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06]"
           >
             <div className="flex items-center justify-between mb-6">
@@ -152,7 +152,7 @@ export default function ExpensesClient({ monthlyBurn, currency }: ExpensesClient
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

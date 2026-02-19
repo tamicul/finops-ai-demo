@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+
 import { AlertTriangle, CheckCircle, Sparkles, TrendingUp, TrendingDown, AlertCircle, Zap } from "lucide-react";
 import { formatCurrency } from "@/lib/currency/converter";
 import { CurrencyCode } from "@/lib/currency/config";
@@ -68,11 +68,11 @@ export default function AnomaliesClient({ currency }: AnomaliesClientProps) {
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {stats.map((stat, index) => (
-            <motion.div
+            <div
               key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
+              
+              
+              
               className="bg-zinc-900/50 rounded-2xl p-5 border border-white/[0.06]"
             >
               <p className="text-sm text-zinc-400">{stat.label}</p>
@@ -80,15 +80,15 @@ export default function AnomaliesClient({ currency }: AnomaliesClientProps) {
               <p className={stat.color === "emerald" ? "text-emerald-400 text-sm mt-1" : stat.color === "red" ? "text-red-400 text-sm mt-1" : "text-blue-400 text-sm mt-1"}>
                 {stat.change}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* Anomalies List */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <div
+          
+          
+          
           className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06]"
         >
           <div className="flex items-center gap-2 mb-6">
@@ -149,7 +149,7 @@ export default function AnomaliesClient({ currency }: AnomaliesClientProps) {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+
 import { ArrowLeftRight, TrendingDown, TrendingUp, Calendar, ArrowUpRight, ArrowDownRight } from "lucide-react";
 import { formatCurrency } from "@/lib/currency/converter";
 import { CurrencyCode } from "@/lib/currency/config";
@@ -60,11 +60,11 @@ export default function CashFlowClient({ financialData, currency }: CashFlowClie
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {stats.map((stat, index) => (
-            <motion.div
+            <div
               key={stat.label}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
+              
+              
+              
               className="bg-zinc-900/50 rounded-2xl p-5 border border-white/[0.06]"
             >
               <p className="text-sm text-zinc-400">{stat.label}</p>
@@ -74,15 +74,15 @@ export default function CashFlowClient({ financialData, currency }: CashFlowClie
               <p className={cn("text-sm mt-1", stat.positive ? "text-emerald-400" : "text-red-400")}>
                 {stat.change}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+            
+            
             className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06]"
           >
             <h2 className="text-lg font-semibold text-white mb-6">Income vs Expenses</h2>
@@ -101,12 +101,12 @@ export default function CashFlowClient({ financialData, currency }: CashFlowClie
                 </BarChart>
               </ResponsiveContainer>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div
+            
+            
+            
             className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06]"
           >
             <h2 className="text-lg font-semibold text-white mb-6">Net Cash Flow</h2>
@@ -130,14 +130,14 @@ export default function CashFlowClient({ financialData, currency }: CashFlowClie
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Runway Alert */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <div
+          
+          
+          
           className="mt-6 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-2xl p-6 border border-yellow-500/20"
         >
           <div className="flex items-start gap-4">
@@ -152,7 +152,7 @@ export default function CashFlowClient({ financialData, currency }: CashFlowClie
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
 import {
   TrendingUp,
   TrendingDown,
@@ -182,12 +181,9 @@ export default function DashboardClient({ user, currency, financialData }: Dashb
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {stats.map((stat, index) => (
-            <motion.div
+          {stats.map((stat) => (
+            <div
               key={stat.title}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
               className="bg-zinc-900/50 rounded-2xl p-5 border border-white/[0.06] hover:border-white/[0.1] transition-all"
             >
               <div className="flex items-start justify-between">
@@ -237,15 +233,12 @@ export default function DashboardClient({ user, currency, financialData }: Dashb
                   />
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 
         {/* Cash Flow Chart */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <div
           className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06]"
         >
           <div className="flex items-center justify-between mb-6">
@@ -294,7 +287,7 @@ export default function DashboardClient({ user, currency, financialData }: Dashb
               </AreaChart>
             </ResponsiveContainer>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
