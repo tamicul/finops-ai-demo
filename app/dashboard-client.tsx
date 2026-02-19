@@ -10,11 +10,12 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Download,
-  UserButton,
 } from "lucide-react";
+import { UserButton } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
 import { CurrencySelector } from "@/components/currency-selector";
-import { CurrencyCode, formatCurrency } from "@/lib/currency/config";
+import { CurrencyCode } from "@/lib/currency/config";
+import { formatCurrency } from "@/lib/currency/converter";
 import {
   AreaChart,
   Area,
