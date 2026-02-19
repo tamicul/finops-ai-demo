@@ -10,13 +10,17 @@ export default async function ReportsPage() {
     redirect("/sign-in");
   }
   
-  const userSettings = await prisma.userSettings.findUnique({
-    where: { userId }
-  });
+  const [userSettings, transactions, financialData] = await Promise.all([
+    prisma.userSettings.findUnique({ where: { userId } }),
+    prisma.transaction.findMany({ where: { userId } }),
+    prisma.financialData.findUnique({ where: { userId } })
+  ]);
   
   return (
     <ReportsClient 
       currency={userSettings?.currency || 'USD'}
+      transactions={transactions}
+      financialData={financialData}
     />
   );
 }

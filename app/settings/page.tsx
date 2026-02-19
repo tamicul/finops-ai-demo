@@ -12,20 +12,17 @@ export default async function SettingsPage() {
   }
   
   const user = await currentUser();
-  
-  const financialData = await prisma.financialData.findFirst({
-    where: { userId }
-  });
-  
-  const userSettings = await prisma.userSettings.findUnique({
-    where: { userId }
-  });
+  const [financialData, userSettings] = await Promise.all([
+    prisma.financialData.findUnique({ where: { userId } }),
+    prisma.userSettings.findUnique({ where: { userId } })
+  ]);
   
   return (
     <SettingsClient 
       user={{
-        firstName: user?.firstName || 'User',
-        email: user?.emailAddresses[0]?.emailAddress
+        firstName: user?.firstName || '',
+        email: user?.emailAddresses[0]?.emailAddress || '',
+        has2FA: user?.twoFactorEnabled || false,
       }}
       financialData={financialData}
       currency={userSettings?.currency || 'USD'}

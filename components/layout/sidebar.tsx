@@ -11,11 +11,13 @@ import {
   Settings,
   Wallet,
   ChevronRight,
+  List,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const mainNav = [
   { name: "Overview", href: "/", icon: LayoutDashboard },
+  { name: "Transactions", href: "/transactions", icon: List },
   { name: "Cash Flow", href: "/cashflow", icon: ArrowLeftRight },
   { name: "Expenses", href: "/expenses", icon: CreditCard },
   { name: "Anomalies", href: "/anomalies", icon: Bell },

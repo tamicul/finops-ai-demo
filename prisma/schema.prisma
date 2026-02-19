@@ -35,12 +35,16 @@ model Transaction {
   name                String
   category            String
   amount              Float
+  type                String   @default("expense")
   originalAmount      Float?
   originalCurrency    String?
   exchangeRate        Float?
   date                DateTime @default(now())
   icon                String?
   trend               String?
+  
+  @@index([userId])
+  @@index([date])
 }
 
 model ExchangeRate {
