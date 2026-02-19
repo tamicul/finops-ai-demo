@@ -334,11 +334,11 @@ export default function SettingsClient({ user, financialData, currency }: Settin
             {activeTab === 'integrations' && (
               <div className="space-y-6">
                 <div className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06]">
-                  <h2 className="text-lg font-semibold text-white mb-4">Bank Connections</h2>
+                  <h2 className="text-lg font-semibold text-white mb-4">Landmark Connections</h2>
                   <div className="space-y-4">
                     {[
                       { name: 'Chase', status: 'Not connected', icon: '🏦' },
-                      { name: 'Bank of America', status: 'Not connected', icon: '🏦' },
+                      { name: 'Landmark of America', status: 'Not connected', icon: '🏦' },
                       { name: 'Wells Fargo', status: 'Not connected', icon: '🏦' },
                       { name: 'Stripe', status: 'Not connected', icon: '💳' },
                       { name: 'PayPal', status: 'Not connected', icon: '💰' },
@@ -365,7 +365,7 @@ export default function SettingsClient({ user, financialData, currency }: Settin
                       <Lock className="w-6 h-6 text-blue-400" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-white">Bank-Level Security</h3>
+                      <h3 className="text-lg font-semibold text-white">Landmark-Level Security</h3>
                       <p className="text-sm text-zinc-400 mt-1">
                         Your financial data is encrypted and securely stored. We use Plaid to connect to your bank accounts safely.
                       </p>
