@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import ExpensesClient from "./expenses-client";
 
 export default async function ExpensesPage() {
-  const { userId } = auth();
+  const { userId } = await auth();
   
   if (!userId) {
     redirect("/sign-in");

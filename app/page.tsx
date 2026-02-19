@@ -7,7 +7,7 @@ import { CurrencyCode, defaultCurrency } from "@/lib/currency/config";
 import DashboardClient from "./dashboard-client";
 
 export default async function Dashboard() {
-  const { userId } = auth();
+  const { userId } = await auth();
   
   if (!userId) {
     redirect("/sign-in");

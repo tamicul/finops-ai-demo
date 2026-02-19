@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import ReportsClient from "./reports-client";
 
 export default async function ReportsPage() {
-  const { userId } = auth();
+  const { userId } = await auth();
   
   if (!userId) {
     redirect("/sign-in");

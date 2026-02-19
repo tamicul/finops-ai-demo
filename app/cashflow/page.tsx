@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import CashFlowClient from "./cashflow-client";
 
 export default async function CashFlowPage() {
-  const { userId } = auth();
+  const { userId } = await auth();
   
   if (!userId) {
     redirect("/sign-in");

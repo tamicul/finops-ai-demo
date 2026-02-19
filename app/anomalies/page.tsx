@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 import AnomaliesClient from "./anomalies-client";
 
 export default async function AnomaliesPage() {
-  const { userId } = auth();
+  const { userId } = await auth();
   
   if (!userId) {
     redirect("/sign-in");

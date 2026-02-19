@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 import SettingsClient from "./settings-client";
 
 export default async function SettingsPage() {
-  const { userId } = auth();
+  const { userId } = await auth();
   
   if (!userId) {
     redirect("/sign-in");
