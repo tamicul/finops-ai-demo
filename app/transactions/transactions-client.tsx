@@ -225,6 +225,92 @@ export default function TransactionsClient({ transactions, currency }: Transacti
           <Link href="/" className="text-sm text-emerald-400 hover:text-emerald-300">← Back to Overview</Link>
         </header>
 
+        {/* Add Transaction Options */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+          <div className="bg-gradient-to-r from-emerald-500/10 to-green-500/10 rounded-xl p-5 border border-emerald-500/20">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                <Plus className="w-6 h-6 text-emerald-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-white">Add Transaction Manually</h3>
+                <p className="text-sm text-zinc-400 mt-1">Enter income or expenses one by one with full details</p>
+                <button
+                  onClick={() => {
+                    setEditingTransaction(null);
+                    setFormData({
+                      name: "", description: "", category: "", amount: "", type: "expense",
+                      date: new Date().toISOString().split('T')[0], vendor: "", vendorType: "",
+                      paymentMethod: "", referenceNumber: "", status: "completed", tags: [], tagInput: ""
+                    });
+                    setIsModalOpen(true);
+                  }}
+                  className="mt-3 flex items-center gap-2 px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg transition-colors text-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Manually
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-blue-500/10 to-violet-500/10 rounded-xl p-5 border border-blue-500/20">
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                <Link2 className="w-6 h-6 text-blue-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold text-white">Connect Bank Account</h3>
+                <p className="text-sm text-zinc-400 mt-1">Automatically import transactions from your bank</p>
+                <button
+                  onClick={() => alert('Bank integration via Plaid coming soon!')}
+                  className="mt-3 flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors text-sm"
+                >
+                  <Building2 className="w-4 h-4" />
+                  Connect Bank
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Connected Banks Status */}
+        <div className="bg-zinc-900/50 rounded-xl p-5 border border-white/[0.06] mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-emerald-400" />
+              Connected Accounts
+            </h3>
+            <span className="text-xs text-zinc-500">Auto-sync enabled</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+              <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center text-xl">🏦</div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-white">Bank Account</p>
+                <p className="text-xs text-zinc-500">Not connected</p>
+              </div>
+              <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+            </div>
+            <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+              <div className="w-10 h-10 rounded-lg bg-violet-500/10 flex items-center justify-center text-xl">💳</div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-white">Stripe</p>
+                <p className="text-xs text-zinc-500">Not connected</p>
+              </div>
+              <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+            </div>
+            <div className="flex items-center gap-3 p-3 bg-zinc-800/50 rounded-lg opacity-50">
+              <div className="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center text-xl">💰</div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-white">PayPal</p>
+                <p className="text-xs text-zinc-500">Not connected</p>
+              </div>
+              <button className="text-xs text-emerald-400 hover:text-emerald-300">Connect</button>
+            </div>
+          </div>
+        </div>
+
         {/* Summary Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <div className="bg-zinc-900/50 rounded-xl p-5 border border-white/[0.06]">
