@@ -125,6 +125,9 @@ export default function SettingsClient({ user, financialData, userSettings }: Se
               <button onClick={() => setActiveTab("financial")} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === "financial" ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'}`}>
                 <CreditCard className="w-5 h-5" /> Financial Data
               </button>
+              <button onClick={() => setActiveTab("integrations")} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === "integrations" ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'}`}>
+                <Landmark className="w-5 h-5" /> Integrations
+              </button>
               <button onClick={() => setActiveTab("security")} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${activeTab === "security" ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'text-zinc-400 hover:text-white hover:bg-zinc-800/50'}`}>
                 <Shield className="w-5 h-5" /> Security
               </button>
@@ -297,6 +300,102 @@ export default function SettingsClient({ user, financialData, userSettings }: Se
                   </button>
                 </div>
               </form>
+            )}
+
+            {activeTab === "integrations" && (
+              <div className="space-y-6">
+                {/* Banking */}
+                <div className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06]">
+                  <h2 className="text-lg font-semibold text-white mb-4">Banking</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { name: 'Chase', icon: '🏦', color: 'bg-green-500/10' },
+                      { name: 'Bank of America', icon: '🏦', color: 'bg-red-500/10' },
+                      { name: 'Wells Fargo', icon: '🏦', color: 'bg-yellow-500/10' },
+                      { name: 'Other Banks', sub: '10,000+ supported', icon: '🏦', color: 'bg-blue-500/10' },
+                    ].map((bank) => (
+                      <div key={bank.name} className="flex items-center justify-between p-4 bg-zinc-800/50 rounded-xl">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 ${bank.color} rounded-lg flex items-center justify-center text-xl`}>{bank.icon}</div>
+                          <div>
+                            <p className="text-sm font-medium text-white">{bank.name}</p>
+                            {bank.sub && <p className="text-xs text-zinc-500">{bank.sub}</p>}
+                          </div>
+                        </div>
+                        <button className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors">
+                          Connect
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Payment Platforms */}
+                <div className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06]">
+                  <h2 className="text-lg font-semibold text-white mb-4">Payment Platforms</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { name: 'Stripe', sub: 'Card Payments', icon: '💳', color: 'bg-violet-500/10' },
+                      { name: 'PayPal', sub: 'Business', icon: '💰', color: 'bg-blue-500/10' },
+                      { name: 'Opay', sub: 'Mobile Money', icon: '💚', color: 'bg-green-500/10' },
+                      { name: 'Flutterwave', sub: 'Africa Payments', icon: '💳', color: 'bg-orange-500/10' },
+                    ].map((platform) => (
+                      <div key={platform.name} className="flex items-center justify-between p-4 bg-zinc-800/50 rounded-xl">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 ${platform.color} rounded-lg flex items-center justify-center text-xl`}>{platform.icon}</div>
+                          <div>
+                            <p className="text-sm font-medium text-white">{platform.name}</p>
+                            <p className="text-xs text-zinc-500">{platform.sub}</p>
+                          </div>
+                        </div>
+                        <button className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors">
+                          Connect
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Crypto & Digital Wallets */}
+                <div className="bg-zinc-900/50 rounded-2xl p-6 border border-white/[0.06]">
+                  <h2 className="text-lg font-semibold text-white mb-4">Crypto & Digital Wallets</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { name: 'Coinbase', sub: 'Crypto', icon: '₿', color: 'bg-orange-500/10' },
+                      { name: 'Wise', sub: 'Transfers', icon: '💎', color: 'bg-cyan-500/10' },
+                      { name: 'Payoneer', sub: 'Global', icon: '📱', color: 'bg-red-500/10' },
+                      { name: 'Remitly', sub: 'Remittances', icon: '⇄', color: 'bg-emerald-500/10' },
+                    ].map((wallet) => (
+                      <div key={wallet.name} className="flex items-center justify-between p-4 bg-zinc-800/50 rounded-xl">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 ${wallet.color} rounded-lg flex items-center justify-center text-xl`}>{wallet.icon}</div>
+                          <div>
+                            <p className="text-sm font-medium text-white">{wallet.name}</p>
+                            <p className="text-xs text-zinc-500">{wallet.sub}</p>
+                          </div>
+                        </div>
+                        <button className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium rounded-lg transition-colors">
+                          Connect
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-r from-blue-500/10 to-violet-500/10 rounded-2xl p-6 border border-blue-500/20">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                      <Lock className="w-6 h-6 text-blue-400" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-semibold text-white">Bank-Level Security</h3>
+                      <p className="text-sm text-zinc-400 mt-1">
+                        Your financial data is encrypted and securely stored. We use Plaid for banking and OAuth for payment platforms. You control what data is shared.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             )}
 
             {activeTab === "security" && (
